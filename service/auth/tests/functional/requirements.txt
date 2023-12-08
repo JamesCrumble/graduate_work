@@ -1,0 +1,13 @@
+aiohttp==3.8.4
+backoff==2.2.1
+Faker==19.1.0
+orjson==3.9.*
+psycopg==3.1.9
+pydantic[dotenv]==1.10.9
+pydantic_factories==1.17.3
+pytest==7.4.0
+pytest-asyncio==0.21.1
+redis==4.5.5
+requests==2.31.*
+SQLAlchemy==2.0.16
+types-redis==4.6.0.3

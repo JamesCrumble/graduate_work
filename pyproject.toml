@@ -1,0 +1,49 @@
+[tool.autopep8]
+max_line_length = 130
+exclude = ".local"
+
+[tool.flake8]
+max-line-length=130
+exclude = [
+    "*/migrations/*",
+    "__pycache__",
+    "manage.py",
+    "*/settings/*",
+    "venv",
+    ".venv"
+]
+
+[tool.isort]
+skip = "migrations"
+skip_glob = "**/migrations"
+known_django = "django"
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+
+[tool.pytest.ini_options]
+minversion = "6.2"
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    'ignore:"@coroutine" decorator is deprecated since Python 3.8, use "async def" instead:DeprecationWarning',
+]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src"]
+modules = ["myproject"]
+exclude = [
+    '*.egg-info',
+    ".git",
+    ".mypy_cache",
+    "build",
+    "dist"]
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = True
+disallow_untyped_defs = True
+check_untyped_defs = True
+warn_redundant_casts = True
+no_implicit_optional = True
+strict_optional = True

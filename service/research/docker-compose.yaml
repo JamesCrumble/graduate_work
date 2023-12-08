@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+
+  testapp:
+    build: src/
+    entrypoint: python runfromdocker.py
+    env_file:
+      - .env
+    volumes:
+      - ./results.txt:/opt/app/results.txt:rw
+    depends_on:
+      - postgres
+      - mongo
+
+  mongo:
+    image: mongo
+    env_file:
+      - .env
+    ports:
+      - "${MONGO_LOCAL_PORT}:27017"
+
+  postgres:
+    image: postgres:15
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_LOCAL_PORT}:5432"

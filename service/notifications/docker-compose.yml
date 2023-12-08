@@ -1,0 +1,28 @@
+version: "3"
+services:
+  notifications_service_rabbitmq:
+    container_name: notifications_service_rabbitmq
+    image: rabbitmq:3.10.7-management
+    env_file:
+      - ./secrets/.env.prod
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+
+  notifications_service_api:
+    container_name: notifications_service_api
+    build: ./src
+    env_file:
+      - ./secrets/.env.prod
+    ports:
+      - "4777:4777"
+    depends_on:
+      - notifications_service_rabbitmq
+    entrypoint: sh -c "/bin/bash /opt/app/entrypoint.sh"
+
+volumes:
+  rabbitmq:

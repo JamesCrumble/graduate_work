@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  test-mongo-db:
+    image: mongo:6.0
+    container_name: test-mongo-db
+    expose:
+      - "27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongopass
+    command: mongod --dbpath /data/db --port 27017
+
+  test-api:
+    build: ../../src
+    container_name: test-api
+    image: test-api
+    env_file:
+      - ../.env.dev
+    ports:
+      - "4601:4600"
+    entrypoint: sh -c "/bin/bash /opt/app/entrypoint.sh"
+    depends_on:
+      - test-mongo-db
+
+  functional-tests:
+    build:
+      context: .
+    container_name: functional-tests
+    image: functional-tests
+    env_file:
+      - ../.env.dev
+    entrypoint: >
+      sh -c "python3 utils/wait_for_service.py && \
+        python3 -m main"
+    depends_on:
+      - test-mongo-db
+      - test-api

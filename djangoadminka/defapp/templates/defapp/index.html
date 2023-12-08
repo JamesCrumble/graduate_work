@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Home ~ {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <h3>
+        <pre>
+{{ text }}
+        </pre>
+    </h3>
+    <h2>
+        <!-- <a href="/fill">Наполнить базу данных</a> -->
+        <br>
+        <a href="http://127.0.0.1:8080/?pgsql=djdb&username=app&db=movies_database">Adminer</a>
+        <br>
+        <a href="/admin">Панель администратора</a>
+    </h2>
+</div>
+
+{% endblock %}

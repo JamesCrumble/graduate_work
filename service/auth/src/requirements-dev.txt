@@ -1,0 +1,9 @@
+aiohttp
+alembic==1.11.2
+autopep8
+blue
+flake8
+httpx==0.24.1
+pre-commit
+pytest
+trio==0.22.2

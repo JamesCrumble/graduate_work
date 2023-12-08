@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  auth_service_postgres_dev:
+    container_name: service_booking_postgres_dev
+    image: postgres:15.0-alpine
+    env_file:
+      - ./secrets/.env.dev
+    ports:
+      - "5452:5432"
+    volumes:
+      # - ./config/backup.sql:/docker-entrypoint-initdb.d/dummy_dump.sql
+      - pg_data_dev:/var/lib/postgresql/data
+
+volumes:
+  pg_data_dev:

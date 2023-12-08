@@ -1,0 +1,22 @@
+alembic==1.11.2
+authlib==1.2.1
+backoff==2.2.1
+cryptography==41.0.3
+fastapi==0.98.0
+gunicorn==20.1.0
+httpx==0.24.1
+itsdangerous==2.1.2
+opentelemetry-exporter-jaeger==1.19.0
+opentelemetry-instrumentation==0.40b0
+opentelemetry-instrumentation-fastapi==0.40b0
+opentelemetry_api==1.19.0
+opentelemetry_sdk==1.19.0
+orjson==3.9.1
+psycopg==3.1.9  # apt install libpq5
+pydantic[dotenv,email]==1.10.9
+PyJWT==2.8.0
+redis==4.5.5
+sentry-sdk==1.32.0
+SQLAlchemy==2.0.16
+typer==0.9.0
+uvicorn==0.22.0

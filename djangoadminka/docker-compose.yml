@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  djdb:
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - djdb_volume:/var/lib/postgresql/data/
+    ports:
+      - 8432:5432
+
+  adminer:
+    image: adminer:latest
+    env_file:
+      - .env
+    environment:
+      ADMINER_DEFAULT_SERVER: djdb
+    ports:
+      - 8080:8080
+    depends_on:
+      - djdb
+  djs:
+    build:
+      args:
+        STATIC_ROOT: /opt/app_static
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    env_file:
+      - .env
+    entrypoint: sh -c "/bin/bash /opt/app/entrypoint.sh"
+    depends_on:
+      - djdb
+    volumes:
+      - djs_volume:/opt/app_static
+  djn:
+    image: nginx:1.19.2
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/djs.conf:/etc/nginx/conf.d/djs.conf:ro
+      - djs_volume:/opt/app/static
+    depends_on:
+      - djs
+
+volumes:
+  djdb_volume:
+  djs_volume:

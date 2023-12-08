@@ -1,0 +1,21 @@
+version: "3"
+services:
+  service_activity_db:
+    image: mongo:6.0
+    container_name: service_activity_db
+    ports:
+      - 27017:27017
+    expose:
+      - "27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongopass
+    command: mongod --dbpath /data/db --port 27017
+    #  --shardsvr --replSet mongors1
+    volumes:
+      # - mongodb_localtime:/etc/localtime:ro
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_localtime:
+  mongodb_data:

@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  test-api:
+    build: ../../src
+    container_name: test-api
+    image: test-api
+    env_file:
+      - ../.env.dev.test
+    ports:
+      - "4801:4800"
+    entrypoint: sh -c "/bin/bash /opt/app/entrypoint.sh"
+
+  functional-tests:
+    build:
+      context: .
+    container_name: functional-tests
+    image: functional-tests
+    env_file:
+      - ../.env.dev.test
+    entrypoint: >
+      sh -c "python3 utils/wait_for_service.py && \
+        python3 -m main"
+    depends_on:
+      - test-api

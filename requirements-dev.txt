@@ -1,0 +1,10 @@
+aiohttp
+alembic==1.11.2
+autopep8
+blue
+check-print
+flake8==5.0.4
+httpx==0.24.1
+pre-commit
+pytest
+trio==0.22.2

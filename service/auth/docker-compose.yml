@@ -1,0 +1,89 @@
+version: "3"
+
+services:
+  auth_service:
+    container_name: auth_service
+    build: ./src
+    expose:
+      - 4200
+    env_file:
+      - ./secrets/.env.prod
+    depends_on:
+      auth_service_postgres:
+        condition: service_healthy
+      auth_service_redis:
+        condition: service_healthy
+    entrypoint: sh -c "/bin/bash /opt/app/entrypoint.sh prod"
+    volumes:
+      - auth_gunicorn:/tmp
+
+  auth_service_postgres:
+    container_name: auth_service_postgres
+    image: postgres:15.0-alpine
+    env_file:
+      - ./secrets/.env.prod
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 5432
+    volumes:
+      - pg_data_prod:/var/lib/postgresql/data
+
+  auth_service_redis:
+    container_name: auth_service_redis
+    image: redis:7.0.4-alpine
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    expose:
+      - 6379
+    volumes:
+      - ./config/redis.conf:/redis.conf
+    command: [ "redis-server", "/redis.conf" ]
+
+  auth_service_nginx:
+    image: nginx:1.25.0
+    container_name: auth_service_nginx
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/site:/etc/nginx/conf.d:ro
+      - auth_gunicorn:/tmp
+    env_file:
+      - ./secrets/.env.prod
+    depends_on:
+      - auth_service
+    ports:
+      - "4200:80"
+
+  auth_service_jaeger:
+    image: jaegertracing/all-in-one:1.48
+    container_name: auth_service_jaeger
+    ports:
+      - "6831/udp"
+      - "16686:16686/tcp"
+
+  filebeat-auth:
+    image: elastic/filebeat:7.10.2
+    volumes:
+      - /tmp/logs/nginx:/var/log/nginx:ro
+      - ./filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
+    entrypoint: "filebeat -e -strict.perms=false"
+    depends_on:
+      - auth_service
+      - auth_service_postgres
+      - auth_service_redis
+      - auth_service_nginx
+      - auth_service_jaeger
+
+volumes:
+  pg_data_prod:
+  auth_gunicorn:
